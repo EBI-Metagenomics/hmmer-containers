@@ -1,6 +1,6 @@
-FROM scratch
+FROM docker.io/alpine
 LABEL maintainer="danilo.horta@pm.me"
 COPY --from=quay.io/microbiome-informatics/hmmer-builder:latest /hmmer/src/hmmpress /usr/local/bin/hmmpress
-RUN chmod +x /usr/local/bin/h3master
+RUN chmod 0755 /usr/local/bin/hmmpress
 ENTRYPOINT ["/usr/local/bin/hmmpress"]
 CMD ["-h"]

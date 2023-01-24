@@ -1,0 +1,9 @@
+#!/bin/bash
+set -e
+
+for d in hmmer-builder hmmpress h3master h3worker; do
+    test -d "$d" || continue
+    test -e "$d/Containerfile" || continue
+    echo "-- Pushing $d"
+    podman push quay.io/microbiome-informatics/$d:latest
+done

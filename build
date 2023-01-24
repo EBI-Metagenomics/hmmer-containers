@@ -1,0 +1,21 @@
+#!/bin/bash
+set -e
+
+if [ "$#" != "1" ]; then
+    echo "Usage: ./build PLATFORM" >&2
+    echo >&2
+    echo "  PLATFORM = {linux/arm64,darwin/arm64," >&2
+    echo "              linux/amd64,darwin/amd64}" >&2
+    exit 1
+fi
+
+PLATFORM=$1
+
+for d in hmmer-builder hmmpress h3master h3worker; do
+    test -d "$d" || continue
+    test -e "$d/Containerfile" || continue
+    echo "-- Building for $d"
+    (cd $d && podman build -t quay.io/microbiome-informatics/$d:latest --platform $PLATFORM .)
+    echo
+    echo
+done
