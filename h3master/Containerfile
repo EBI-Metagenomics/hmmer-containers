@@ -1,0 +1,7 @@
+FROM docker.io/alpine
+LABEL maintainer="danilo.horta@pm.me"
+COPY --from=quay.io/microbiome-informatics/hmmer-builder:latest /hmmer/src/hmmpgmd /usr/local/bin/hmmpgmd
+COPY h3master /usr/local/bin/h3master
+COPY healthcheck /usr/local/bin/healthcheck
+ENTRYPOINT ["/usr/local/bin/h3master"]
+CMD ["-h"]
