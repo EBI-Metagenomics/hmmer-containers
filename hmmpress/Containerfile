@@ -1,5 +1,6 @@
 FROM scratch
 LABEL maintainer="danilo.horta@pm.me"
 COPY --from=quay.io/microbiome-informatics/hmmer-builder:latest /hmmer/src/hmmpress /usr/local/bin/hmmpress
+RUN chmod +x /usr/local/bin/h3master
 ENTRYPOINT ["/usr/local/bin/hmmpress"]
 CMD ["-h"]
