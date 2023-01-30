@@ -1,0 +1,21 @@
+#!/bin/bash
+set -e
+
+ARCHS="aarch64 amd64"
+NAME=hmmer-manifest
+
+for IMG in hmmer-builder hmmpress h3master h3worker; do
+    echo "-- Manifesting $IMG"
+    podman manifest create "$NAME"
+    for ARCH in $ARCHS;
+    do
+        echo $ARCH
+        TAG="quay.io/microbiome-informatics/$IMG:$ARCH"
+        podman pull "$TAG"
+        podman manifest add "$NAME" "$TAG"
+    done
+    LATEST="quay.io/microbiome-informatics/$IMG:latest"
+    podman manifest push "$NAME" "$LATEST"
+    echo
+    echo
+done
