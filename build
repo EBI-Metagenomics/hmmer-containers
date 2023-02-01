@@ -1,18 +1,35 @@
 #!/bin/bash
 set -e
 
-OS=$(uname -o | tr '[:upper:]' '[:lower:]')
+OS=$(uname | tr '[:upper:]' '[:lower:]')
 ARCH=$(uname -m)
+
+[ "$ARCH" == "aarch64" ] && ARCH="arm64"
+[ "$ARCH" == "x86_64" ] && ARCH="amd64"
 
 if [ "$OS" != "linux" ]; then
     echo "Unexpected OS $OS. Please, try it on Linux." >&2
     exit 1
 fi
 
+if [ "$ARCH" != "amd64" ] && [ "$ARCH" != "arm64" ]; then
+    echo "Unexpected ARCH $ARCH. We support amd64 and arm64 architectures only." >&2
+    exit 1
+fi
+
+BLUE='\033[0;34m'
+GREEN='\033[1;32m'
+NC='\033[0m'
+
 for IMG in hmmer-builder hmmpress h3master h3worker; do
-    echo "-- Building $IMG on $OS/$ARCH"
+    echo
+    echo -e "${BLUE}Building $IMG on $ARCH${NC}"
     TAG="quay.io/microbiome-informatics/$IMG:$ARCH"
     (cd $IMG && podman build -t "$TAG" --arch "$ARCH" --os "$OS" .)
+
     echo
-    echo
+    echo -e "${BLUE}Pushing $IMG on $ARCH${NC}"
+    TAG="quay.io/microbiome-informatics/$IMG:$ARCH"
+    podman push --format v2s2 "$TAG"
 done
+echo -e "${GREEN}Done.${NC}"

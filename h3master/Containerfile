@@ -1,6 +1,7 @@
 FROM docker.io/alpine
 LABEL maintainer="danilo.horta@pm.me"
-COPY --from=quay.io/microbiome-informatics/hmmer-builder:latest /hmmer/src/hmmpgmd /usr/local/bin/hmmpgmd
+ARG TARGETARCH
+COPY --from=quay.io/microbiome-informatics/hmmer-builder:$TARGETARCH /hmmer/src/hmmpgmd /usr/local/bin/hmmpgmd
 COPY h3master /usr/local/bin/h3master
 COPY healthcheck /usr/local/bin/healthcheck
 RUN chmod 0755 /usr/local/bin/h3master

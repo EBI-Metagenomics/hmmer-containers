@@ -1,21 +1,31 @@
 #!/bin/bash
 set -e
 
-ARCHS="aarch64 amd64"
+OS=$(uname | tr '[:upper:]' '[:lower:]')
+ARCHS="arm64 amd64"
 NAME=hmmer-manifest
 
+if [ "$OS" != "linux" ]; then
+    echo "Unexpected OS $OS. Please, try it on Linux." >&2
+    exit 1
+fi
+
+BLUE='\033[0;34m'
+GREEN='\033[1;32m'
+NC='\033[0m'
+
 for IMG in hmmer-builder hmmpress h3master h3worker; do
-    echo "-- Manifesting $IMG"
+    echo
+    echo -e "${BLUE}Manifesting $IMG${NC}"
+    podman manifest rm "$NAME" || true
     podman manifest create "$NAME"
     for ARCH in $ARCHS;
     do
-        echo $ARCH
         TAG="quay.io/microbiome-informatics/$IMG:$ARCH"
         podman pull "$TAG"
         podman manifest add "$NAME" "$TAG"
     done
     LATEST="quay.io/microbiome-informatics/$IMG:latest"
     podman manifest push "$NAME" "$LATEST"
-    echo
-    echo
 done
+echo -e "${GREEN}Done.${NC}"
