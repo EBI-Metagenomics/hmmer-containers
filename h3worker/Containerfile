@@ -7,4 +7,3 @@ COPY healthcheck /usr/local/bin/healthcheck
 RUN chmod 0755 /usr/local/bin/h3worker
 RUN chmod 0755 /usr/local/bin/healthcheck
 ENTRYPOINT ["/usr/local/bin/h3worker"]
-CMD ["-h"]
